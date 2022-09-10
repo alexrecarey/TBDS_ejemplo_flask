@@ -12,6 +12,7 @@ os.chdir(os.path.dirname(__file__))
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
+
 # Route for the GitHub webhook
 
 @app.route('/git_update', methods=['POST'])
