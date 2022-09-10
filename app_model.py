@@ -32,20 +32,20 @@ def predict():
     
     return jsonify({'predictions': prediction[0]})
 
-@app.route('/api/v1/retrain', methods=['PUT'])
-def retrain():
-    data = pd.read_csv('data/Advertising.csv', index_col=0)
-
-    X_train, X_test, y_train, y_test = train_test_split(data.drop(columns=['sales']),
-                                                    data['sales'],
-                                                    test_size = 0.20,
-                                                    random_state=42)
-
-    model = Lasso(alpha=6000)
-    model.fit(X_train, y_train)
-
-    pickle.dump(model, open('ad_model.pkl', 'wb'))
-
-    return "Model retrained. New evaluation metric RMSE: " + str(np.sqrt(mean_squared_error(y_test, model.predict(X_test))))
-
-app.run()
+#@app.route('/api/v1/retrain', methods=['PUT'])
+#def retrain():
+#    data = pd.read_csv('data/Advertising.csv', index_col=0)
+#
+#    X_train, X_test, y_train, y_test = train_test_split(data.drop(columns=['sales']),
+#                                                    data['sales'],
+#                                                    test_size = 0.20,
+#                                                    random_state=42)
+#
+#    model = Lasso(alpha=6000)
+#    model.fit(X_train, y_train)
+#
+#    pickle.dump(model, open('ad_model.pkl', 'wb'))
+#
+#    return "Model retrained. New evaluation metric RMSE: " + str(np.sqrt(mean_squared_error(y_test, model.predict(X_test))))
+if __name__ == "__main__":
+    app.run()
