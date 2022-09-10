@@ -25,7 +25,7 @@ def git_update():
 
 @app.route("/", methods=['GET'])
 def hello():
-    return "Bienvenido a mi API del modelo advertising"
+    return "Bienvenido a mi API del modelo advertising (actualizado)"
 
 
 @app.route('/api/v1/predict', methods=['GET'])
