@@ -1,3 +1,5 @@
+import csv
+
 from flask import Flask, flash, jsonify, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
 
@@ -33,8 +35,9 @@ def git_update():
     origin.pull()
     return '', 200
 
+
 @app.route("/", methods=['GET'])
-def hello():
+def home():
     return render_template('index.html')
 
 
@@ -42,22 +45,33 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 @app.route("/predict", methods=['POST'])
 def predict():
     print("testing")
-    if 'file' not in request.files:
+    if 'predictionfile' not in request.files:
         flash('No file part')
-        return redirect(request.url)
-    file = request.files['file']
+        return redirect(url_for(home))
+    file = request.files['predictionfile']
     # If the user does not select a file, the browser submits an
     # empty file without a filename.
     if file.filename == '':
         flash('No selected file')
-        return redirect(request.url)
+        return redirect(url_for(home))
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return '''parece que funciona'''
+        #filename = secure_filename(file.filename)
+        #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        datos = pd.read_csv(file)
+        model = pickle.load(open('ad_model.pkl', 'rb'))
+        tv = request.args.get('tv', None)
+        radio = request.args.get('radio', None)
+        newspaper = request.args.get('newspaper', None)
+
+        prediction = model.predict(datos)
+
+        #return render_template("results.html", prediction)
+
+        return jsonify({'predictions': prediction.tolist()})
 
 #
 # return '''
@@ -69,6 +83,7 @@ def predict():
 #           <input type=submit value=Upload>
 #         </form>
 #         '''
+
 
 @app.route('/api/v1/predict', methods=['GET'])
 def predict_original():
